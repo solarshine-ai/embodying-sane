@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Embodying Sane</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy: #06091a;
+  --gold: #C9A96E;
+  --gold-soft: #E8D5A3;
+  --gold-dim: rgba(201,169,110,0.15);
+  --plum: #9B6B8A;
+  --plum-light: rgba(155,107,138,0.8);
+  --white: #F7F0E3;
+  --white-dim: rgba(247,240,227,0.65);
+  --danger: #C9607A;
+  --warning: #C9A96E;
+  --safe: #7AAF8A;
+  --card-bg: rgba(247,240,227,0.03);
+  --card-border: rgba(201,169,110,0.14);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; background:#030610; font-family:'Lato',sans-serif; overflow:hidden; }
+
+/* ── PHONE SHELL ── */
+.app-wrap {
+  display:flex; justify-content:center; align-items:center;
+  min-height:100vh; padding:20px;
+  background: radial-gradient(ellipse at 30% 20%, rgba(80,40,120,0.25) 0%, transparent 60%),
+              radial-gradient(ellipse at 75% 85%, rgba(100,60,30,0.15) 0%, transparent 55%),
+              #030610;
+}
+.phone {
+  width:390px; height:844px;
+  background:var(--navy);
+  border-radius:50px;
+  overflow:hidden;
+  position:relative;
+  box-shadow: 0 0 60px rgba(201,169,110,0.1), 0 0 120px rgba(80,40,120,0.12), 0 30px 80px rgba(0,0,0,0.7);
+  border:1px solid rgba(201,169,110,0.12);
+  display:flex; flex-direction:column;
+}
+.ambient {
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse at 25% 15%, rgba(155,107,138,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(80,40,120,0.1) 0%, transparent 45%);
+}
+
+/* ── SCREENS ── */
+.screen { position:absolute; inset:0; display:none; flex-direction:column; z-index:1; }
+.screen.active { display:flex; }
+.screen-body { flex:1; overflow-y:auto; padding-bottom:80px; }
+.screen-body::-webkit-scrollbar { display:none; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position:absolute; bottom:0; left:0; right:0; z-index:100;
+  background:linear-gradient(180deg, transparent 0%, rgba(6,9,26,0.98) 30%);
+  padding:10px 0 28px;
+  display:flex; justify-content:space-around; align-items:flex-end;
+}
+.nav-btn {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:none; border:none; cursor:pointer; padding:6px 12px;
+  transition:all 0.2s;
+}
+.nav-icon { font-size:20px; opacity:0.4; transition:all 0.2s; }
+.nav-label { font-size:9px; font-family:'Cinzel',serif; letter-spacing:1px; color:rgba(247,240,227,0.35); transition:all 0.2s; }
+.nav-btn.active .nav-icon { opacity:1; }
+.nav-btn.active .nav-label { color:var(--gold); }
+.nav-btn:hover .nav-icon { opacity:0.7; }
+
+/* ── HEADER ── */
+.hdr {
+  background:linear-gradient(180deg,#07091c 0%,transparent 100%);
+  padding:52px 24px 16px;
+  display:flex; align-items:center; gap:14px;
+  flex-shrink:0; position:relative; z-index:10;
+}
+.back-btn {
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(201,169,110,0.08); border:1px solid rgba(201,169,110,0.2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; color:var(--gold); transition:all 0.2s;
+}
+.back-btn:hover { background:rgba(201,169,110,0.15); }
+.hdr-title { font-family:'Cinzel',serif; font-size:15px; font-weight:600; color:var(--white); letter-spacing:1px; }
+.hdr-sub { font-size:10px; font-weight:300; color:var(--plum-light); letter-spacing:2px; margin-top:2px; }
+
+/* ── CARDS ── */
+.card {
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-radius:16px; padding:16px; margin:0 20px 12px;
+}
+.card-title { font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; color:var(--gold); margin-bottom:8px; }
+
+/* ── BUTTONS ── */
+.btn-gold {
+  width:100%; padding:16px; border-radius:12px; border:none; cursor:pointer;
+  background:linear-gradient(135deg, var(--gold), #a07840);
+  color:#06091a; font-family:'Cinzel',serif; font-size:13px; font-weight:700;
+  letter-spacing:1px; transition:all 0.2s;
+}
+.btn-gold:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(201,169,110,0.3); }
+.btn-gold:active { transform:translateY(0); }
+.btn-gold:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.btn-outline {
+  width:100%; padding:14px; border-radius:12px; cursor:pointer;
+  background:transparent; border:1px solid rgba(201,169,110,0.3);
+  color:var(--gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:1px;
+  transition:all 0.2s;
+}
+.btn-outline:hover { background:rgba(201,169,110,0.08); }
+
+/* ── TEXTAREA ── */
+.ai-textarea {
+  width:100%; background:rgba(247,240,227,0.04); border:1px solid rgba(201,169,110,0.2);
+  border-radius:12px; padding:14px; color:var(--white); font-family:'Lato',sans-serif;
+  font-size:14px; line-height:1.6; resize:none; outline:none; transition:border 0.2s;
+  min-height:120px;
+}
+.ai-textarea:focus { border-color:rgba(201,169,110,0.5); }
+.ai-textarea::placeholder { color:rgba(247,240,227,0.3); }
+
+/* ── AI RESULT BOX ── */
+.result-box {
+  background:rgba(247,240,227,0.03); border:1px solid rgba(201,169,110,0.15);
+  border-radius:16px; padding:20px; margin:0 20px 12px;
+  display:none;
+}
+.result-box.show { display:block; animation:fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── SCORE BADGE ── */
+.score-ring {
+  width:80px; height:80px; border-radius:50%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:2px solid var(--gold); margin:0 auto 16px;
+  background:rgba(201,169,110,0.05);
+}
+.score-num { font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:var(--gold); }
+.score-label { font-size:8px; letter-spacing:2px; color:var(--plum-light); font-family:'Cinzel',serif; }
+
+/* ── FLAG PILLS ── */
+.flags-wrap { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.flag-pill {
+  padding:5px 12px; border-radius:20px; font-size:11px; font-weight:600;
+  font-family:'Cinzel',serif; letter-spacing:0.5px;
+}
+.flag-red { background:rgba(201,96,122,0.15); border:1px solid rgba(201,96,122,0.4); color:#e8849a; }
+.flag-yellow { background:rgba(201,169,110,0.12); border:1px solid rgba(201,169,110,0.35); color:var(--gold-soft); }
+.flag-green { background:rgba(122,175,138,0.12); border:1px solid rgba(122,175,138,0.35); color:#a0d0b0; }
+
+/* ── LOADING SHIMMER ── */
+.loading-state { text-align:center; padding:30px 20px; display:none; }
+.loading-state.show { display:block; }
+.spinner {
+  width:40px; height:40px; border:2px solid rgba(201,169,110,0.2);
+  border-top:2px solid var(--gold); border-radius:50%; margin:0 auto 16px;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-text { font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; color:var(--plum-light); }
+
+/* ── SECTION DIVIDER ── */
+.divider { height:1px; background:linear-gradient(90deg,transparent,rgba(201,169,110,0.2),transparent); margin:16px 20px; }
+
+/* ── INSIGHT ITEM ── */
+.insight-item { display:flex; gap:12px; margin-bottom:14px; }
+.insight-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.insight-dot.red { background:var(--danger); }
+.insight-dot.yellow { background:var(--gold); }
+.insight-dot.green { background:var(--safe); }
+.insight-dot.plum { background:var(--plum); }
+.insight-text { font-size:13px; color:var(--white-dim); line-height:1.6; }
+
+/* ── TRIANGLE LOGO ── */
+.tri-logo {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.tri-svg { width:32px; height:28px; }
+.brand-name { font-family:'Cinzel',serif; font-size:13px; font-weight:700; color:var(--white); letter-spacing:2px; }
+.brand-tag { font-size:8px; letter-spacing:3px; color:rgba(201,169,110,0.6); font-family:'Cinzel',serif; }
+
+/* ── PATTERN ITEM ── */
+.pattern-item {
+  display:flex; align-items:center; gap:12px; padding:14px 16px;
+  background:rgba(247,240,227,0.025); border:1px solid rgba(201,169,110,0.1);
+  border-radius:12px; margin:0 20px 10px;
+}
+.pattern-emoji { font-size:20px; }
+.pattern-info { flex:1; }
+.pattern-name { font-family:'Cinzel',serif; font-size:11px; color:var(--white); letter-spacing:1px; }
+.pattern-count { font-size:11px; color:var(--plum-light); margin-top:2px; }
+.pattern-bar { width:60px; height:4px; background:rgba(201,169,110,0.1); border-radius:2px; }
+.pattern-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--plum),var(--gold)); }
+
+/* ── SELF TEST ── */
+.q-card {
+  margin:0 20px 16px; padding:20px;
+  background:rgba(247,240,227,0.03); border:1px solid rgba(201,169,110,0.12); border-radius:16px;
+}
+.q-num { font-size:10px; letter-spacing:3px; color:var(--plum-light); font-family:'Cinzel',serif; margin-bottom:8px; }
+.q-text { font-size:15px; color:var(--white); line-height:1.6; font-style:italic; font-family:'Cormorant Garamond',serif; }
+.q-options { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+.q-opt {
+  padding:12px 16px; border-radius:10px; border:1px solid rgba(201,169,110,0.18);
+  background:transparent; color:var(--white-dim); font-size:13px; cursor:pointer;
+  text-align:left; transition:all 0.2s;
+}
+.q-opt:hover, .q-opt.selected { background:rgba(201,169,110,0.1); border-color:rgba(201,169,110,0.4); color:var(--white); }
+.progress-bar { height:2px; background:rgba(201,169,110,0.1); margin:0 20px 20px; border-radius:1px; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--plum),var(--gold)); border-radius:1px; transition:width 0.4s ease; }
+
+/* ── MIRROR ── */
+.mirror-surface {
+  margin:0 20px 16px; padding:24px;
+  background:linear-gradient(135deg, rgba(155,107,138,0.08), rgba(201,169,110,0.05));
+  border:1px solid rgba(155,107,138,0.25); border-radius:20px;
+  position:relative; overflow:hidden;
+}
+.mirror-surface::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:120px; height:120px; border-radius:50%;
+  background:radial-gradient(circle, rgba(155,107,138,0.12), transparent);
+  pointer-events:none;
+}
+.mirror-prompt { font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; color:var(--white-dim); line-height:1.7; margin-bottom:16px; }
+
+/* ── INTENT DETECT ── */
+.intent-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 16px; border-radius:20px; margin-bottom:8px;
+  font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px;
+}
+.intent-badge.manipulative { background:rgba(201,96,122,0.12); border:1px solid rgba(201,96,122,0.3); color:#e8849a; }
+.intent-badge.neutral { background:rgba(201,169,110,0.1); border:1px solid rgba(201,169,110,0.3); color:var(--gold-soft); }
+.intent-badge.genuine { background:rgba(122,175,138,0.1); border:1px solid rgba(122,175,138,0.3); color:#a0d0b0; }
+.intent-badge.boundary { background:rgba(155,107,138,0.12); border:1px solid rgba(155,107,138,0.3); color:#c898b8; }
+
+/* ── DICTIONARY ── */
+.dict-term {
+  margin:0 20px 10px; padding:16px;
+  background:rgba(247,240,227,0.025); border:1px solid rgba(201,169,110,0.1); border-radius:12px;
+  cursor:pointer; transition:all 0.2s;
+}
+.dict-term:hover { background:rgba(247,240,227,0.05); border-color:rgba(201,169,110,0.25); }
+.dict-term-name { font-family:'Cinzel',serif; font-size:12px; color:var(--gold); letter-spacing:1px; margin-bottom:4px; }
+.dict-term-def { font-size:12px; color:var(--white-dim); line-height:1.5; display:none; margin-top:8px; }
+.dict-term.open .dict-term-def { display:block; }
+.dict-term.open { border-color:rgba(201,169,110,0.3); }
+
+/* ── ONBOARDING ── */
+.ob-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px 30px; text-align:center; }
+.sun-icon { font-size:60px; margin-bottom:24px; animation:pulse 3s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.9} 50%{transform:scale(1.05);opacity:1} }
+.ob-title { font-family:'Cinzel',serif; font-size:28px; font-weight:700; color:var(--white); letter-spacing:3px; margin-bottom:8px; }
+.ob-tagline { font-size:11px; letter-spacing:4px; color:var(--gold); font-family:'Cinzel',serif; margin-bottom:30px; }
+.ob-desc { font-family:'Cormorant Garamond',serif; font-size:17px; font-style:italic; color:var(--white-dim); line-height:1.7; margin-bottom:40px; }
+.ob-enter { padding:18px 48px; border-radius:30px; border:none; cursor:pointer; background:linear-gradient(135deg,var(--gold),#a07840); color:#06091a; font-family:'Cinzel',serif; font-size:14px; font-weight:700; letter-spacing:2px; transition:all 0.3s; }
+.ob-enter:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(201,169,110,0.35); }
+
+/* ── HOME ── */
+.home-header { padding:52px 24px 20px; background:linear-gradient(180deg,#08091e 0%,transparent 100%); }
+.home-greeting { font-size:12px; letter-spacing:3px; color:var(--plum-light); font-family:'Cinzel',serif; margin-bottom:4px; }
+.home-title { font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:var(--white); }
+.home-sub { font-size:13px; color:var(--white-dim); margin-top:6px; line-height:1.5; font-family:'Cormorant Garamond',serif; font-style:italic; }
+
+.feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 20px; margin-bottom:12px; }
+.feature-tile {
+  padding:20px 14px; border-radius:16px; cursor:pointer;
+  background:var(--card-bg); border:1px solid var(--card-border);
+  display:flex; flex-direction:column; gap:8px; transition:all 0.2s;
+  text-align:left;
+}
+.feature-tile:hover { background:rgba(247,240,227,0.06); border-color:rgba(201,169,110,0.3); transform:translateY(-2px); }
+.tile-icon { font-size:24px; }
+.tile-name { font-family:'Cinzel',serif; font-size:10px; letter-spacing:1.5px; color:var(--gold); }
+.tile-desc { font-size:11px; color:var(--white-dim); line-height:1.4; }
+.feature-tile.wide { grid-column:span 2; flex-direction:row; align-items:center; gap:16px; padding:18px 20px; }
+.feature-tile.wide .tile-icon { font-size:30px; }
+
+/* ── SCROLL HINT ── */
+.scroll-hint { font-size:10px; letter-spacing:2px; color:rgba(247,240,227,0.2); text-align:center; padding:8px; font-family:'Cinzel',serif; }
+
+/* ── ERROR MSG ── */
+.error-msg { color:#e8849a; font-size:12px; text-align:center; padding:12px; display:none; }
+.error-msg.show { display:block; }
+
+/* ── USAGE COUNTER ── */
+.usage-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 14px; margin:0 20px 12px;
+  background:rgba(201,169,110,0.05); border:1px solid rgba(201,169,110,0.12);
+  border-radius:10px;
+}
+.usage-dots { display:flex; gap:6px; }
+.usage-dot { width:10px; height:10px; border-radius:50%; background:rgba(201,169,110,0.2); border:1px solid rgba(201,169,110,0.3); transition:all 0.3s; }
+.usage-dot.used { background:var(--gold); border-color:var(--gold); }
+.usage-label { font-family:'Cinzel',serif; font-size:9px; letter-spacing:1.5px; color:rgba(201,169,110,0.6); }
+
+/* ── PAYWALL SCREEN ── */
+.paywall-overlay {
+  position:absolute; inset:0; z-index:200;
+  background:linear-gradient(180deg, rgba(6,9,26,0.97) 0%, #06091a 100%);
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  padding:40px 28px; text-align:center;
+}
+.paywall-overlay.show { display:flex; animation:fadeUp 0.4s ease; }
+.paywall-tri {
+  margin-bottom:24px;
+}
+.paywall-title { font-family:'Cinzel',serif; font-size:20px; font-weight:700; color:var(--white); letter-spacing:2px; margin-bottom:10px; }
+.paywall-sub { font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; color:var(--white-dim); line-height:1.7; margin-bottom:28px; }
+.paywall-price {
+  font-family:'Cinzel',serif; font-size:42px; font-weight:700;
+  color:var(--gold); margin-bottom:4px; line-height:1;
+}
+.paywall-period { font-size:11px; letter-spacing:3px; color:var(--plum-light); font-family:'Cinzel',serif; margin-bottom:28px; }
+.paywall-features { width:100%; margin-bottom:28px; }
+.paywall-feature {
+  display:flex; align-items:center; gap:12px; padding:10px 0;
+  border-bottom:1px solid rgba(201,169,110,0.08);
+  text-align:left;
+}
+.paywall-feature:last-child { border-bottom:none; }
+.pf-icon { font-size:18px; width:28px; text-align:center; flex-shrink:0; }
+.pf-text { font-size:13px; color:var(--white-dim); line-height:1.4; }
+.pf-text strong { color:var(--white); font-weight:600; }
+.paywall-btn {
+  width:100%; padding:18px; border-radius:14px; border:none; cursor:pointer;
+  background:linear-gradient(135deg, var(--gold), #a07840);
+  color:#06091a; font-family:'Cinzel',serif; font-size:15px; font-weight:700;
+  letter-spacing:2px; margin-bottom:12px; transition:all 0.2s;
+}
+.paywall-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(201,169,110,0.3); }
+.paywall-back { font-size:11px; color:rgba(247,240,227,0.3); cursor:pointer; font-family:'Cinzel',serif; letter-spacing:1px; padding:8px; }
+.paywall-back:hover { color:rgba(247,240,227,0.6); }
+.paywall-note { font-size:10px; color:rgba(247,240,227,0.2); margin-top:8px; font-style:italic; font-family:'Cormorant Garamond',serif; }
+
+/* ── SUBSCRIBED BADGE ── */
+.subscribed-badge {
+  display:none; align-items:center; gap:6px; padding:6px 14px;
+  background:rgba(122,175,138,0.1); border:1px solid rgba(122,175,138,0.3);
+  border-radius:20px; margin:0 20px 12px;
+}
+.subscribed-badge.show { display:flex; }
+.subscribed-badge span { font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px; color:#a0d0b0; }
+
+/* ── ADMIN STYLES ── */
+.admin-login-wrap {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  height:100%; padding:40px 28px; text-align:center;
+}
+.admin-badge {
+  font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px;
+  color:var(--plum-light); margin-bottom:24px; padding:6px 16px;
+  border:1px solid rgba(155,107,138,0.3); border-radius:20px;
+  background:rgba(155,107,138,0.08);
+}
+.admin-title { font-family:'Cinzel',serif; font-size:22px; font-weight:700; color:var(--white); letter-spacing:2px; margin-bottom:8px; }
+.admin-sub { font-size:12px; color:var(--white-dim); margin-bottom:32px; font-style:italic; font-family:'Cormorant Garamond',serif; }
+.admin-input {
+  width:100%; background:rgba(247,240,227,0.04); border:1px solid rgba(155,107,138,0.3);
+  border-radius:12px; padding:16px; color:var(--white); font-family:'Lato',sans-serif;
+  font-size:16px; outline:none; text-align:center; letter-spacing:3px;
+  margin-bottom:16px; transition:border 0.2s;
+}
+.admin-input:focus { border-color:rgba(155,107,138,0.6); }
+.admin-login-btn {
+  width:100%; padding:16px; border-radius:12px; border:none; cursor:pointer;
+  background:linear-gradient(135deg, var(--plum), #6b3d5a);
+  color:var(--white); font-family:'Cinzel',serif; font-size:13px; font-weight:700;
+  letter-spacing:2px; transition:all 0.2s; margin-bottom:12px;
+}
+.admin-login-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(155,107,138,0.3); }
+.admin-login-err { color:var(--danger); font-size:12px; display:none; font-family:'Cinzel',serif; letter-spacing:1px; margin-bottom:12px; }
+.admin-login-err.show { display:block; }
+.admin-back { font-size:11px; color:rgba(247,240,227,0.25); cursor:pointer; font-family:'Cinzel',serif; letter-spacing:1px; }
+.admin-back:hover { color:rgba(247,240,227,0.5); }
+
+/* ── ADMIN DASHBOARD ── */
+.admin-header {
+  background:linear-gradient(180deg,#07091c 0%,transparent 100%);
+  padding:52px 24px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.admin-header-left { display:flex; flex-direction:column; gap:2px; }
+.admin-header-title { font-family:'Cinzel',serif; font-size:14px; font-weight:700; color:var(--white); letter-spacing:1px; }
+.admin-header-sub { font-size:9px; letter-spacing:2px; color:var(--plum-light); font-family:'Cinzel',serif; }
+.admin-logout { padding:6px 14px; border-radius:20px; border:1px solid rgba(155,107,138,0.3); background:transparent; color:var(--plum-light); font-family:'Cinzel',serif; font-size:9px; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
+.admin-logout:hover { background:rgba(155,107,138,0.1); }
+
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 20px; margin-bottom:12px; }
+.stat-tile {
+  padding:18px 14px; border-radius:14px;
+  background:var(--card-bg); border:1px solid var(--card-border);
+  display:flex; flex-direction:column; gap:6px;
+}
+.stat-num { font-family:'Cinzel',serif; font-size:28px; font-weight:700; color:var(--gold); line-height:1; }
+.stat-label { font-family:'Cinzel',serif; font-size:9px; letter-spacing:1.5px; color:var(--white-dim); }
+.stat-sub { font-size:10px; color:var(--plum-light); }
+
+.admin-section-title {
+  font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--gold);
+  padding:0 20px; margin:16px 0 8px;
+}
+.admin-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px; border-bottom:1px solid rgba(201,169,110,0.06);
+}
+.admin-row-label { font-size:12px; color:var(--white-dim); }
+.admin-row-value { font-family:'Cinzel',serif; font-size:12px; color:var(--white); }
+.admin-action-btn {
+  width:calc(100% - 40px); margin:8px 20px; padding:14px;
+  border-radius:10px; border:1px solid rgba(155,107,138,0.3);
+  background:transparent; color:var(--plum-light); font-family:'Cinzel',serif;
+  font-size:11px; letter-spacing:1px; cursor:pointer; transition:all 0.2s; text-align:left;
+  display:flex; align-items:center; gap:10px;
+}
+.admin-action-btn:hover { background:rgba(155,107,138,0.08); border-color:rgba(155,107,138,0.5); }
+.admin-tri-small {
+  position:absolute; top:14px; right:20px; opacity:0.08;
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+<div class="phone">
+  <div class="ambient"></div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 1: ONBOARDING
+  ═══════════════════════════════════ -->
+  <div class="screen active" id="screen-onboarding">
+    <div class="ob-screen">
+      <!-- Sun SVG with rays -->
+      <div style="margin-bottom:24px">
+        <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+          <circle cx="45" cy="45" r="18" fill="rgba(201,169,110,0.2)" stroke="#C9A96E" stroke-width="1.5"/>
+          <circle cx="45" cy="45" r="12" fill="rgba(201,169,110,0.3)"/>
+          <!-- 32 rays -->
+          <g stroke="#C9A96E" stroke-width="1.2" opacity="0.7">
+            <line x1="45" y1="22" x2="45" y2="14"/><line x1="50.5" y1="22.5" x2="53.3" y2="15.1"/>
+            <line x1="55.5" y1="24.5" x2="60.6" y2="18.3"/><line x1="59.5" y1="28" x2="66.4" y2="23.5"/>
+            <line x1="62" y1="32.5" x2="70.4" y2="30.5"/><line x1="63.5" y1="37.5" x2="72.5" y2="37.5"/>
+            <line x1="63.5" y1="42.5" x2="72.5" y2="43.5"/><line x1="62" y1="47.5" x2="70.4" y2="50.5"/>
+            <line x1="59.5" y1="52" x2="66.4" y2="57.5"/><line x1="55.5" y1="55.5" x2="60.6" y2="62.7"/>
+            <line x1="50.5" y1="57.5" x2="53.3" y2="65.9"/><line x1="45" y1="58" x2="45" y2="66"/>
+            <line x1="39.5" y1="57.5" x2="36.7" y2="65.9"/><line x1="34.5" y1="55.5" x2="29.4" y2="62.7"/>
+            <line x1="30.5" y1="52" x2="23.6" y2="57.5"/><line x1="28" y1="47.5" x2="19.6" y2="50.5"/>
+            <line x1="26.5" y1="42.5" x2="17.5" y2="43.5"/><line x1="26.5" y1="37.5" x2="17.5" y2="37.5"/>
+            <line x1="28" y1="32.5" x2="19.6" y2="30.5"/><line x1="30.5" y1="28" x2="23.6" y2="23.5"/>
+            <line x1="34.5" y1="24.5" x2="29.4" y2="18.3"/><line x1="39.5" y1="22.5" x2="36.7" y2="15.1"/>
+            <!-- inner shorter rays -->
+            <line x1="48" y1="22.5" x2="49.5" y2="17.5" opacity="0.4"/>
+            <line x1="58" y1="30" x2="62" y2="26" opacity="0.4"/>
+            <line x1="63" y1="40" x2="68" y2="39" opacity="0.4"/>
+            <line x1="61" y1="50" x2="66" y2="53" opacity="0.4"/>
+            <line x1="54" y1="57.5" x2="57" y2="62.5" opacity="0.4"/>
+            <line x1="44" y1="61" x2="44" y2="66.5" opacity="0.4"/>
+            <line x1="34" y1="58" x2="31" y2="63" opacity="0.4"/>
+            <line x1="27" y1="51" x2="22" y2="54" opacity="0.4"/>
+            <line x1="24" y1="41" x2="19" y2="40" opacity="0.4"/>
+            <line x1="27" y1="31" x2="22" y2="28" opacity="0.4"/>
+          </g>
+          <!-- dark triangle overlay -->
+          <polygon points="45,30 56,52 34,52" fill="rgba(6,9,26,0.6)" stroke="rgba(201,169,110,0.5)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="ob-title">EMBODYING SANE</div>
+      <div class="ob-tagline">BELIEVE · TRANSFORM · CREATE</div>
+      <div class="ob-desc">See the patterns others hope you won't notice. Understand what's really being said. Trust what you already know.</div>
+      <button class="ob-enter" onclick="goTo('signup')">BEGIN ▲</button>
+      <div style="margin-top:16px;display:flex;gap:20px;justify-content:center;">
+        <span style="font-size:10px;letter-spacing:1px;color:rgba(247,240,227,0.2);font-family:'Cinzel',serif;cursor:pointer;" onclick="goTo('terms')">TERMS</span>
+        <span style="font-size:10px;letter-spacing:1px;color:rgba(247,240,227,0.2);font-family:'Cinzel',serif;">·</span>
+        <span style="font-size:10px;letter-spacing:1px;color:rgba(247,240,227,0.2);font-family:'Cinzel',serif;cursor:pointer;" onclick="goTo('privacy')">PRIVACY</span>
+      </div>
+      <div style="margin-top:16px;opacity:0;width:60px;height:24px;cursor:pointer;" id="admin-trigger" onclick="adminTap()"></div>
+      <div id="admin-tap-hint" style="font-size:9px;letter-spacing:2px;color:rgba(247,240,227,0.08);font-family:'Cinzel',serif;margin-top:2px;min-height:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN: EMAIL SIGNUP
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-signup">
+    <div class="ob-screen">
+      <div style="margin-bottom:20px;">
+        <svg width="60" height="60" viewBox="0 0 90 90" fill="none">
+          <circle cx="45" cy="45" r="18" fill="rgba(201,169,110,0.2)" stroke="#C9A96E" stroke-width="1.5"/>
+          <circle cx="45" cy="45" r="12" fill="rgba(201,169,110,0.3)"/>
+          <g stroke="#C9A96E" stroke-width="1.2" opacity="0.6">
+            <line x1="45" y1="22" x2="45" y2="14"/><line x1="55.5" y1="24.5" x2="60.6" y2="18.3"/>
+            <line x1="63.5" y1="37.5" x2="72.5" y2="37.5"/><line x1="59.5" y1="52" x2="66.4" y2="57.5"/>
+            <line x1="45" y1="58" x2="45" y2="66"/><line x1="30.5" y1="52" x2="23.6" y2="57.5"/>
+            <line x1="26.5" y1="37.5" x2="17.5" y2="37.5"/><line x1="34.5" y1="24.5" x2="29.4" y2="18.3"/>
+          </g>
+          <polygon points="45,30 56,52 34,52" fill="rgba(6,9,26,0.6)" stroke="rgba(201,169,110,0.5)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="ob-title" style="font-size:22px;">CREATE YOUR ACCOUNT</div>
+      <div class="ob-tagline" style="margin-bottom:20px;">FREE TO START · NO CREDIT CARD</div>
+      <div style="width:100%;margin-bottom:12px;">
+        <input type="text" id="signup-name" class="admin-input" style="border-color:rgba(201,169,110,0.3);letter-spacing:0;text-align:left;font-size:14px;" placeholder="Your first name"/>
+      </div>
+      <div style="width:100%;margin-bottom:12px;">
+        <input type="email" id="signup-email" class="admin-input" style="border-color:rgba(201,169,110,0.3);letter-spacing:0;text-align:left;font-size:14px;" placeholder="Your email address"/>
+      </div>
+      <div id="signup-error" style="color:var(--danger);font-size:11px;font-family:'Cinzel',serif;letter-spacing:1px;margin-bottom:8px;display:none;"></div>
+      <button class="ob-enter" style="width:100%;padding:16px;border-radius:12px;" onclick="doSignup()">START FOR FREE ▲</button>
+      <div style="margin-top:16px;font-size:10px;color:rgba(247,240,227,0.2);font-family:'Cormorant Garamond',serif;font-style:italic;line-height:1.6;padding:0 10px;">
+        By continuing you agree to our
+        <span style="color:rgba(201,169,110,0.4);cursor:pointer;" onclick="goTo('terms')">Terms of Service</span>
+        and
+        <span style="color:rgba(201,169,110,0.4);cursor:pointer;" onclick="goTo('privacy')">Privacy Policy</span>.
+        We never sell your data.
+      </div>
+      <div style="margin-top:12px;">
+        <span style="font-size:11px;color:rgba(247,240,227,0.2);cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1px;" onclick="goTo('onboarding')">← BACK</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN: TERMS OF SERVICE
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-terms">
+    <div class="hdr">
+      <button class="back-btn" onclick="history_back_legal()">‹</button>
+      <div><div class="hdr-title">TERMS OF SERVICE</div><div class="hdr-sub">EMBODYING SANE</div></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:16px 24px 20px;">
+        <div style="font-size:10px;letter-spacing:2px;color:var(--gold);font-family:'Cinzel',serif;margin-bottom:16px;">LAST UPDATED: MARCH 2026</div>
+
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--white-dim);line-height:1.8;">
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">1. ACCEPTANCE OF TERMS</div>
+          By accessing or using Embodying Sane ("the App"), you agree to be bound by these Terms of Service. If you do not agree, do not use the App.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">2. WHAT THE APP DOES</div>
+          Embodying Sane is a relationship awareness tool designed to help users identify communication patterns and emotional dynamics. It is for personal insight and educational purposes only. It is not a substitute for professional therapy, legal advice, or medical treatment.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">3. FREE TRIAL & SUBSCRIPTION</div>
+          New users receive 3 free uses of the Conversation Analyzer and 3 free uses of The Mirror. After free uses are exhausted, a subscription of $10 per month is required to continue. Subscriptions are billed monthly and may be cancelled at any time. Cancellation takes effect at the end of the current billing period.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">4. REFUND POLICY</div>
+          If you are unsatisfied with your subscription within the first 7 days of your first payment, contact us for a full refund. After 7 days, refunds are at our discretion. To request a refund, email us at the contact address provided in the app.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">5. CANCELLATION</div>
+          You may cancel your subscription at any time through your account settings. You will retain access to premium features until the end of your current billing cycle. We do not charge cancellation fees.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">6. YOUR CONTENT</div>
+          Content you enter into the App (conversations, personal reflections) is processed to provide you with analysis. We do not store, sell, or share your personal content with third parties. See our Privacy Policy for full details.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">7. LIMITATION OF LIABILITY</div>
+          Embodying Sane provides tools for self-awareness and is not responsible for decisions made based on app outputs. AI-generated analysis is intended as a starting point for reflection, not as definitive fact.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">8. CHANGES TO TERMS</div>
+          We may update these Terms at any time. Continued use of the App after changes constitutes acceptance of the new Terms.
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN: PRIVACY POLICY
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-privacy">
+    <div class="hdr">
+      <button class="back-btn" onclick="history_back_legal()">‹</button>
+      <div><div class="hdr-title">PRIVACY POLICY</div><div class="hdr-sub">YOUR DATA IS YOURS</div></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:16px 24px 20px;">
+        <div style="font-size:10px;letter-spacing:2px;color:var(--gold);font-family:'Cinzel',serif;margin-bottom:16px;">LAST UPDATED: MARCH 2026</div>
+
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--white-dim);line-height:1.8;">
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">OUR COMMITMENT</div>
+          Embodying Sane was built to help people see clearly. We apply that same clarity to your data. We will never sell, rent, or exploit your personal information.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">WHAT WE COLLECT</div>
+          We collect your name and email address when you create an account. We collect payment information through Stripe (our payment processor) — we never see or store your full card number. We collect usage data such as how many analyses you have run, solely to manage your free trial and subscription.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">WHAT WE DO NOT COLLECT</div>
+          We do not store the conversations, messages, or personal reflections you enter into the app. This content is processed in real time to generate your analysis and is not retained on our servers after your session ends.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">HOW WE USE YOUR DATA</div>
+          Your email is used to manage your account, send subscription receipts, and provide account support. We may occasionally send product updates — you may opt out at any time.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">AI PROCESSING</div>
+          The AI features in this app are powered by Anthropic's Claude API. Text you submit for analysis is sent to Anthropic's servers for processing. Anthropic's privacy policy governs that processing. We do not store your submissions after the API returns your results.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">YOUR RIGHTS</div>
+          You have the right to access, correct, or delete your account data at any time. To request deletion of your account and all associated data, contact us directly. We will process deletion requests within 30 days.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">COOKIES</div>
+          This app does not use tracking cookies. We do not track you across websites.
+
+          <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);margin:16px 0 8px;">CONTACT</div>
+          For privacy questions or data requests, reach us through the contact option in your account settings.
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       ADMIN: LOGIN SCREEN
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-admin-login">
+    <div class="admin-login-wrap">
+      <svg width="50" height="44" viewBox="0 0 50 44" style="margin-bottom:20px">
+        <polygon points="25,4 48,42 2,42" fill="rgba(155,107,138,0.15)" stroke="rgba(155,107,138,0.5)" stroke-width="1.5"/>
+        <polygon points="25,14 38,38 12,38" fill="rgba(6,9,26,0.8)" stroke="rgba(155,107,138,0.3)" stroke-width="1"/>
+      </svg>
+      <div class="admin-badge">ADMINISTRATOR ACCESS</div>
+      <div class="admin-title">ADMIN LOGIN</div>
+      <div class="admin-sub">This area is for the creator of Embodying Sane only.</div>
+      <input type="password" class="admin-input" id="admin-pw-input" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')checkAdminPW()"/>
+      <div class="admin-login-err" id="admin-err">Incorrect password. Try again.</div>
+      <button class="admin-login-btn" onclick="checkAdminPW()">ENTER ADMIN ▲</button>
+      <div class="admin-back" onclick="goTo('onboarding')">← BACK TO APP</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       ADMIN: DASHBOARD SCREEN
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-admin-dashboard">
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <div class="admin-header-title">▲ ADMIN DASHBOARD</div>
+        <div class="admin-header-sub">EMBODYING SANE · CREATOR VIEW</div>
+      </div>
+      <button class="admin-logout" onclick="adminLogout()">LOGOUT</button>
+    </div>
+    <div class="screen-body">
+
+      <!-- Revenue Stats -->
+      <div class="admin-section-title">REVENUE OVERVIEW</div>
+      <div class="stat-grid">
+        <div class="stat-tile">
+          <div class="stat-num" id="admin-subscribers">0</div>
+          <div class="stat-label">SUBSCRIBERS</div>
+          <div class="stat-sub">Active this month</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num" id="admin-revenue">$0</div>
+          <div class="stat-label">MONTHLY REV</div>
+          <div class="stat-sub">After Stripe fees</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num" id="admin-trial-users">0</div>
+          <div class="stat-label">ON FREE TRIAL</div>
+          <div class="stat-sub">Potential converts</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num" id="admin-analyses">0</div>
+          <div class="stat-label">ANALYSES RUN</div>
+          <div class="stat-sub">Total all time</div>
+        </div>
+      </div>
+
+      <!-- Admin Status -->
+      <div class="admin-section-title">YOUR ACCOUNT</div>
+      <div class="admin-row">
+        <div class="admin-row-label">Account type</div>
+        <div class="admin-row-value" style="color:var(--gold)">CREATOR · UNLIMITED</div>
+      </div>
+      <div class="admin-row">
+        <div class="admin-row-label">Subscription fee</div>
+        <div class="admin-row-value" style="color:var(--safe)">$0 · FREE FOREVER</div>
+      </div>
+      <div class="admin-row">
+        <div class="admin-row-label">AI features access</div>
+        <div class="admin-row-value">ALL UNLOCKED</div>
+      </div>
+      <div class="admin-row">
+        <div class="admin-row-label">Paywall status</div>
+        <div class="admin-row-value" style="color:var(--safe)">BYPASSED</div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-section-title">QUICK ACTIONS</div>
+      <button class="admin-action-btn" onclick="adminGoToApp()">
+        <span>🚀</span> Use the full app — no limits
+      </button>
+      <button class="admin-action-btn" onclick="adminResetDemo()">
+        <span>🔄</span> Reset demo usage counters
+      </button>
+      <button class="admin-action-btn" onclick="adminTogglePaywall()">
+        <span id="admin-pw-toggle-icon">👁</span> <span id="admin-pw-toggle-text">Preview paywall screen</span>
+      </button>
+      <button class="admin-action-btn" onclick="alert('Stripe integration — connect your Stripe account to start accepting real payments. Come back to Claude and we will build this together.')">
+        <span>💳</span> Connect Stripe payments
+      </button>
+      <button class="admin-action-btn" onclick="alert('App Store deployment — when ready to publish to iOS and Android, come back and we will build this step together.')">
+        <span>📱</span> Deploy to App Store
+      </button>
+
+      <div style="padding:20px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:rgba(247,240,227,0.2);line-height:1.6;">
+        Built with Victoria · Powered by Claude<br/>BELIEVE · TRANSFORM · CREATE ▲
+      </div>
+    </div>
+  </div>
+  <div class="screen" id="screen-home">
+    <div class="screen-body">
+      <div class="home-header">
+        <div class="home-greeting">WELCOME BACK</div>
+        <div class="home-title">Embodying Sane</div>
+        <div class="home-sub">You already know the truth. Let's make it visible.</div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-tile" onclick="goTo('analyzer')">
+          <div class="tile-icon">💬</div>
+          <div class="tile-name">ANALYZER</div>
+          <div class="tile-desc">Paste a conversation for AI-powered insight</div>
+        </div>
+        <div class="feature-tile" onclick="goTo('mirror')">
+          <div class="tile-icon">🪞</div>
+          <div class="tile-name">THE MIRROR</div>
+          <div class="tile-desc">Reflect your own patterns back to you</div>
+        </div>
+        <div class="feature-tile" onclick="goTo('intent')">
+          <div class="tile-icon">🎯</div>
+          <div class="tile-name">INTENT</div>
+          <div class="tile-desc">Detect hidden intent in messages</div>
+        </div>
+        <div class="feature-tile" onclick="goTo('selftest')">
+          <div class="tile-icon">✦</div>
+          <div class="tile-name">SELF-TEST</div>
+          <div class="tile-desc">How aware are you right now?</div>
+        </div>
+      </div>
+      <div class="feature-tile wide" style="margin:0 20px 12px" onclick="goTo('dictionary')">
+        <div class="tile-icon">📖</div>
+        <div style="flex:1">
+          <div class="tile-name">RED FLAG DICTIONARY</div>
+          <div class="tile-desc">Name what you're experiencing — gaslighting, love bombing, DARVO, and more</div>
+        </div>
+        <div style="color:var(--gold);font-size:16px;">›</div>
+      </div>
+      <div class="feature-tile wide" style="margin:0 20px 12px" onclick="goTo('timeline')">
+        <div class="tile-icon">📊</div>
+        <div style="flex:1">
+          <div class="tile-name">PATTERN TIMELINE</div>
+          <div class="tile-desc">Track patterns across your relationship history</div>
+        </div>
+        <div style="color:var(--gold);font-size:16px;">›</div>
+      </div>
+      <div style="display:flex;gap:16px;justify-content:center;padding:8px 0;">
+        <span style="font-size:9px;letter-spacing:1px;color:rgba(247,240,227,0.15);font-family:'Cinzel',serif;cursor:pointer;" onclick="goTo('terms')">TERMS</span>
+        <span style="font-size:9px;color:rgba(247,240,227,0.1);">·</span>
+        <span style="font-size:9px;letter-spacing:1px;color:rgba(247,240,227,0.15);font-family:'Cinzel',serif;cursor:pointer;" onclick="goTo('privacy')">PRIVACY</span>
+        <span style="font-size:9px;color:rgba(247,240,227,0.1);">·</span>
+        <span style="font-size:9px;letter-spacing:1px;color:rgba(247,240,227,0.15);font-family:'Cinzel',serif;cursor:pointer;" onclick="goTo('privacy')">CANCEL</span>
+      </div>
+      <div class="scroll-hint">▾ SCROLL FOR MORE</div>
+    </div>
+    <div class="bottom-nav" id="nav-home-bar">
+      <button class="nav-btn active" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+  <!-- PAYWALL OVERLAY -->
+  <div class="paywall-overlay" id="paywall">
+    <div class="paywall-tri">
+      <svg width="60" height="54" viewBox="0 0 60 54">
+        <polygon points="30,4 58,52 2,52" fill="rgba(201,169,110,0.1)" stroke="#C9A96E" stroke-width="1.5"/>
+        <polygon points="30,16 46,44 14,44" fill="rgba(6,9,26,0.8)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="paywall-title">YOUR FREE TRIAL IS COMPLETE</div>
+    <div class="paywall-sub">You have experienced what Embodying Sane can do. Now go deeper — without limits.</div>
+    <div class="paywall-price">$10</div>
+    <div class="paywall-period">PER MONTH · CANCEL ANYTIME</div>
+    <div class="paywall-features">
+      <div class="paywall-feature"><div class="pf-icon">💬</div><div class="pf-text"><strong>Unlimited</strong> Conversation Analysis</div></div>
+      <div class="paywall-feature"><div class="pf-icon">🪞</div><div class="pf-text"><strong>Unlimited</strong> Mirror Sessions</div></div>
+      <div class="paywall-feature"><div class="pf-icon">🎯</div><div class="pf-text"><strong>Intent Detection</strong> — decode any message</div></div>
+      <div class="paywall-feature"><div class="pf-icon">📖</div><div class="pf-text"><strong>Full Dictionary</strong> — all red flag terms</div></div>
+      <div class="paywall-feature"><div class="pf-icon">✦</div><div class="pf-text"><strong>Self-Test</strong> and Pattern Timeline</div></div>
+    </div>
+    <button class="paywall-btn" onclick="handleSubscribe()">SUBSCRIBE · $10/MONTH ▲</button>
+    <div class="paywall-back" onclick="closePaywall()">← GO BACK</div>
+    <div class="paywall-note">Honest pricing. No 99 cents. No tricks.</div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 3: CONVERSATION ANALYZER (LIVE AI)
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-analyzer">
+    <div class="hdr">
+      <button class="back-btn" onclick="goTo('home')">‹</button>
+      <div><div class="hdr-title">CONVERSATION ANALYZER</div><div class="hdr-sub">AI-POWERED · REAL ANALYSIS</div></div>
+    </div>
+    <div class="screen-body">
+      <div class="subscribed-badge" id="analyzer-subscribed"><span>✦</span><span>UNLIMITED · SUBSCRIBED</span></div>
+      <div class="usage-bar" id="analyzer-usage-bar">
+        <div class="usage-dots" id="analyzer-dots"></div>
+        <div class="usage-label" id="analyzer-usage-label">FREE USES REMAINING</div>
+      </div>
+      <div class="card">
+        <div class="card-title">PASTE YOUR CONVERSATION</div>
+        <textarea class="ai-textarea" id="analyzer-input" rows="6" placeholder="Paste the conversation here — texts, messages, anything. Include both sides if possible. The AI will analyze patterns, manipulation tactics, emotional tone, and what's really being communicated..."></textarea>
+        <div style="margin-top:12px; display:flex; gap:8px; flex-direction:column;">
+          <button class="btn-gold" id="analyze-btn" onclick="runAnalysis()">ANALYZE CONVERSATION ▲</button>
+          <div class="error-msg" id="analyzer-error">Something went wrong. Please try again.</div>
+        </div>
+      </div>
+
+      <div class="loading-state" id="analyzer-loading">
+        <div class="spinner"></div>
+        <div class="loading-text">READING THE PATTERNS...</div>
+        <div style="font-size:11px;color:var(--white-dim);margin-top:8px;font-style:italic;font-family:'Cormorant Garamond',serif">Analyzing tone, intent, dynamics, and red flags</div>
+      </div>
+
+      <div class="result-box" id="analyzer-result">
+        <div class="score-ring" id="result-score-ring">
+          <div class="score-num" id="result-score">—</div>
+          <div class="score-label">CONCERN</div>
+        </div>
+        <div id="result-flags" class="flags-wrap" style="justify-content:center"></div>
+        <div class="divider"></div>
+        <div class="card-title">WHAT THE AI SEES</div>
+        <div id="result-insights"></div>
+        <div class="divider"></div>
+        <div class="card-title">WHAT YOU MIGHT SAY OR DO</div>
+        <div id="result-advice" style="font-size:13px;color:var(--white-dim);line-height:1.7;font-family:'Cormorant Garamond',serif;font-style:italic;"></div>
+        <div style="margin-top:16px;">
+          <button class="btn-outline" onclick="clearAnalyzer()">ANALYZE ANOTHER</button>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn active" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 4: THE MIRROR (LIVE AI)
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-mirror">
+    <div class="hdr">
+      <button class="back-btn" onclick="goTo('home')">‹</button>
+      <div><div class="hdr-title">THE MIRROR</div><div class="hdr-sub">SEE YOURSELF CLEARLY</div></div>
+    </div>
+    <div class="screen-body">
+      <div class="subscribed-badge" id="mirror-subscribed"><span>✦</span><span>UNLIMITED · SUBSCRIBED</span></div>
+      <div class="usage-bar" id="mirror-usage-bar">
+        <div class="usage-dots" id="mirror-dots"></div>
+        <div class="usage-label" id="mirror-usage-label">FREE USES REMAINING</div>
+      </div>
+      <div class="mirror-surface">
+        <div class="mirror-prompt">Describe a situation or relationship that's been on your mind. The Mirror will reflect your own patterns back to you — gently, honestly, without judgment.</div>
+        <textarea class="ai-textarea" id="mirror-input" rows="5" placeholder="What's been happening? How have you been responding? What do you keep thinking about? Write freely — this is just for you..."></textarea>
+        <div style="margin-top:12px;">
+          <button class="btn-gold" id="mirror-btn" onclick="runMirror()">LOOK INTO THE MIRROR ▲</button>
+          <div class="error-msg" id="mirror-error">Something went wrong. Please try again.</div>
+        </div>
+      </div>
+
+      <div class="loading-state" id="mirror-loading">
+        <div class="spinner" style="border-top-color:var(--plum)"></div>
+        <div class="loading-text" style="color:var(--plum-light)">THE MIRROR IS REFLECTING...</div>
+        <div style="font-size:11px;color:var(--white-dim);margin-top:8px;font-style:italic;font-family:'Cormorant Garamond',serif">Looking for your patterns, not theirs</div>
+      </div>
+
+      <div class="result-box" id="mirror-result" style="border-color:rgba(155,107,138,0.25)">
+        <div style="text-align:center;margin-bottom:20px;">
+          <svg width="50" height="44" viewBox="0 0 50 44"><polygon points="25,4 48,42 2,42" fill="rgba(155,107,138,0.15)" stroke="rgba(155,107,138,0.5)" stroke-width="1.5"/></svg>
+        </div>
+        <div class="card-title" style="color:var(--plum-light)">WHAT THE MIRROR SHOWS</div>
+        <div id="mirror-reflection" style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--white-dim);line-height:1.8;margin-bottom:16px;"></div>
+        <div class="divider"></div>
+        <div class="card-title" style="color:var(--plum-light)">YOUR PATTERNS</div>
+        <div id="mirror-patterns" style="margin-bottom:16px;"></div>
+        <div class="divider"></div>
+        <div class="card-title" style="color:var(--plum-light)">A QUESTION FOR YOU</div>
+        <div id="mirror-question" style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--white);line-height:1.7;padding:16px;background:rgba(155,107,138,0.08);border-radius:12px;border-left:2px solid rgba(155,107,138,0.4);"></div>
+        <div style="margin-top:16px;">
+          <button class="btn-outline" style="border-color:rgba(155,107,138,0.3);color:var(--plum-light)" onclick="clearMirror()">REFLECT AGAIN</button>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn active" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 5: INTENT DETECTION (LIVE AI)
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-intent">
+    <div class="hdr">
+      <button class="back-btn" onclick="goTo('home')">‹</button>
+      <div><div class="hdr-title">INTENT DETECTION</div><div class="hdr-sub">WHAT ARE THEY REALLY SAYING</div></div>
+    </div>
+    <div class="screen-body">
+      <div class="card">
+        <div class="card-title">PASTE A MESSAGE OR STATEMENT</div>
+        <textarea class="ai-textarea" id="intent-input" rows="4" placeholder="Paste a single message, text, or thing someone said. The AI will decode the real intent beneath the words..."></textarea>
+        <div style="margin-top:12px;">
+          <button class="btn-gold" id="intent-btn" onclick="runIntent()">DETECT INTENT ▲</button>
+          <div class="error-msg" id="intent-error">Something went wrong. Please try again.</div>
+        </div>
+      </div>
+
+      <div class="loading-state" id="intent-loading">
+        <div class="spinner"></div>
+        <div class="loading-text">DECODING THE MESSAGE...</div>
+      </div>
+
+      <div class="result-box" id="intent-result">
+        <div class="card-title">DETECTED INTENT</div>
+        <div id="intent-badges" style="margin-bottom:16px;"></div>
+        <div id="intent-explanation" style="font-size:13px;color:var(--white-dim);line-height:1.7;margin-bottom:16px;"></div>
+        <div class="divider"></div>
+        <div class="card-title">WHAT'S BENEATH THE WORDS</div>
+        <div id="intent-subtext" style="font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:var(--white-dim);line-height:1.7;margin-bottom:16px;padding:14px;background:rgba(201,169,110,0.04);border-radius:12px;border-left:2px solid rgba(201,169,110,0.3);"></div>
+        <div class="card-title">HOW TO RESPOND</div>
+        <div id="intent-response" style="font-size:13px;color:var(--white-dim);line-height:1.7;"></div>
+        <div style="margin-top:16px;">
+          <button class="btn-outline" onclick="clearIntent()">ANALYZE ANOTHER</button>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 6: SELF-TEST
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-selftest">
+    <div class="hdr">
+      <button class="back-btn" onclick="goTo('home')">‹</button>
+      <div><div class="hdr-title">SELF-TEST</div><div class="hdr-sub">HOW AWARE ARE YOU RIGHT NOW</div></div>
+    </div>
+    <div class="screen-body" id="selftest-body">
+      <!-- dynamically rendered -->
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn active" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 7: RED FLAG DICTIONARY
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-dictionary">
+    <div class="hdr">
+      <button class="back-btn" onclick="goTo('home')">‹</button>
+      <div><div class="hdr-title">RED FLAG DICTIONARY</div><div class="hdr-sub">NAME WHAT YOU'RE EXPERIENCING</div></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:12px 20px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--white-dim);line-height:1.6;">Tap any term to understand it. Naming it is the first step to freedom.</div>
+      <div id="dict-list"></div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 8: PATTERN TIMELINE
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-timeline">
+    <div class="hdr">
+      <button class="back-btn" onclick="goTo('home')">‹</button>
+      <div><div class="hdr-title">PATTERN TIMELINE</div><div class="hdr-sub">YOUR RELATIONSHIP HISTORY</div></div>
+    </div>
+    <div class="screen-body">
+      <div style="padding:12px 20px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--white-dim);line-height:1.6;">Patterns don't lie. Here's what keeps showing up across your relationships.</div>
+      <div id="timeline-list"></div>
+      <div class="card" style="margin-top:8px;">
+        <div class="card-title">ADD A NEW PATTERN</div>
+        <textarea class="ai-textarea" id="timeline-input" rows="3" placeholder="Describe a pattern you've noticed — in yourself or in others..." style="min-height:80px;"></textarea>
+        <div style="margin-top:10px;"><button class="btn-gold" onclick="addPattern()">ADD TO TIMELINE ▲</button></div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="goTo('home')"><div class="nav-icon">⌂</div><div class="nav-label">HOME</div></button>
+      <button class="nav-btn" onclick="goTo('analyzer')"><div class="nav-icon">💬</div><div class="nav-label">ANALYZE</div></button>
+      <button class="nav-btn" onclick="goTo('mirror')"><div class="nav-icon">🪞</div><div class="nav-label">MIRROR</div></button>
+      <button class="nav-btn" onclick="goTo('selftest')"><div class="nav-icon">✦</div><div class="nav-label">TEST</div></button>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+</div><!-- /app-wrap -->
+
+<script>
+// ═══════════════════════════════════════════════
+// SUBSCRIPTION & USAGE SYSTEM
+// Free: 3 uses each for Analyzer + Mirror
+// $10/month unlocks everything unlimited
+// ═══════════════════════════════════════════════
+const FREE_LIMIT = 3;
+// In production this connects to a payment processor (Stripe etc)
+// For now we track usage in memory and simulate subscription
+let usage = { analyzer: 0, mirror: 0, subscribed: false, paywallFrom: null };
+
+function isSubscribed() { return usage.subscribed; }
+
+function getRemainingUses(feature) {
+  return Math.max(0, FREE_LIMIT - usage[feature]);
+}
+
+function canUseFeature(feature) {
+  return isSubscribed() || usage[feature] < FREE_LIMIT;
+}
+
+function useFeature(feature) {
+  if (!isSubscribed()) usage[feature]++;
+  updateUsageUI(feature);
+}
+
+function updateUsageUI(feature) {
+  const bar = document.getElementById(feature + '-usage-bar');
+  const dots = document.getElementById(feature + '-dots');
+  const label = document.getElementById(feature + '-usage-label');
+  const badge = document.getElementById(feature + '-subscribed');
+  if (!bar || !dots) return;
+
+  if (isSubscribed()) {
+    bar.style.display = 'none';
+    if (badge) badge.classList.add('show');
+    return;
+  }
+  badge && badge.classList.remove('show');
+  bar.style.display = 'flex';
+  const remaining = getRemainingUses(feature);
+  dots.innerHTML = '';
+  for (let i = 0; i < FREE_LIMIT; i++) {
+    const d = document.createElement('div');
+    d.className = 'usage-dot' + (i < usage[feature] ? ' used' : '');
+    dots.appendChild(d);
+  }
+  label.textContent = remaining === 0 ? 'NO FREE USES LEFT' : `${remaining} FREE USE${remaining !== 1 ? 'S' : ''} REMAINING`;
+  if (remaining === 0) label.style.color = 'var(--danger)';
+  else label.style.color = 'rgba(201,169,110,0.6)';
+}
+
+function showPaywall(from) {
+  usage.paywallFrom = from;
+  document.getElementById('paywall').classList.add('show');
+}
+
+function closePaywall() {
+  document.getElementById('paywall').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// STRIPE PAYMENT INTEGRATION
+// Test key active — swap for live key when ready
+// ═══════════════════════════════════════════════
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51T64ucKApdJ58VdN9ksejzUqbxDOOxM8klZeiOKNtGZ5ghDlBvavJSukJUkhzI7ri62q7Tmg2pgYV5ztqiCiWQC400mjRs52h';
+
+async function handleSubscribe() {
+  const btn = document.querySelector('.paywall-btn');
+  btn.textContent = 'CONNECTING TO STRIPE...';
+  btn.disabled = true;
+
+  try {
+    // Load Stripe.js dynamically if not already loaded
+    if (!window.Stripe) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://js.stripe.com/v3/';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    const stripe = window.Stripe(STRIPE_PUBLISHABLE_KEY);
+
+    // NOTE: In production you need a backend server to create a Checkout Session
+    // and return the session ID. For now we redirect to Stripe Payment Link
+    // which you create once in your Stripe dashboard — no server needed.
+    //
+    // To create your Payment Link:
+    // 1. Go to stripe.com → Products → Create Product → "Embodying Sane Subscription"
+    // 2. Set price to $10/month recurring
+    // 3. Create Payment Link → copy the URL
+    // 4. Replace the URL below with your Payment Link URL
+    
+    const PAYMENT_LINK = 'https://buy.stripe.com/test_YOUR_PAYMENT_LINK';
+    
+    // Check if payment link has been configured
+    if (PAYMENT_LINK.includes('YOUR_PAYMENT_LINK')) {
+      // Show setup instructions in admin-friendly way
+      showStripeSetupGuide();
+      btn.textContent = 'SUBSCRIBE · $10/MONTH ▲';
+      btn.disabled = false;
+      return;
+    }
+
+    // Redirect to Stripe hosted checkout
+    window.location.href = PAYMENT_LINK + '?prefilled_email=' + encodeURIComponent(currentUser.email || '');
+
+  } catch(err) {
+    console.error('Stripe error:', err);
+    btn.textContent = 'SUBSCRIBE · $10/MONTH ▲';
+    btn.disabled = false;
+    showError('stripe-err', 'Payment connection failed. Please try again.');
+  }
+}
+
+function showStripeSetupGuide() {
+  document.getElementById('paywall').classList.remove('show');
+  // Show a friendly setup screen for you as the admin
+  const guide = document.createElement('div');
+  guide.style.cssText = 'position:absolute;inset:0;z-index:300;background:#06091a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;text-align:center;';
+  guide.innerHTML = `
+    <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#C9A96E;margin-bottom:20px;">▲ STRIPE SETUP REQUIRED</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:rgba(247,240,227,0.7);line-height:1.7;margin-bottom:24px;">
+      One last step to take real payments.<br/>
+      Create your Payment Link in Stripe:
+    </div>
+    <div style="background:rgba(247,240,227,0.04);border:1px solid rgba(201,169,110,0.15);border-radius:12px;padding:16px;width:100%;text-align:left;margin-bottom:20px;">
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:#C9A96E;margin-bottom:12px;">STEPS IN STRIPE DASHBOARD</div>
+      <div style="font-size:12px;color:rgba(247,240,227,0.6);line-height:2;">
+        1. Go to stripe.com → Products<br/>
+        2. Create product: "Embodying Sane"<br/>
+        3. Set price: $10 / month recurring<br/>
+        4. Create a Payment Link<br/>
+        5. Copy the link URL<br/>
+        6. Come back to Claude — paste it in<br/>
+        7. I will add it to your app in 2 minutes
+      </div>
+    </div>
+    <button onclick="this.parentElement.remove()" style="padding:14px 32px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,#C9A96E,#a07840);color:#06091a;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1px;">GOT IT ▲</button>
+  `;
+  document.querySelector('.phone').appendChild(guide);
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById('screen-' + id);
+  if (s) {
+    s.classList.add('active');
+    const body = s.querySelector('.screen-body');
+    if (body) body.scrollTop = 0;
+  }
+  if (id === 'selftest') initSelfTest();
+  if (id === 'dictionary') initDictionary();
+  if (id === 'timeline') initTimeline();
+  if (id === 'analyzer') updateUsageUI('analyzer');
+  if (id === 'mirror') updateUsageUI('mirror');
+  // Track where to return from legal screens
+  if (id === 'terms' || id === 'privacy') {
+    // legalReturnScreen already set or defaults to signup
+  } else {
+    legalReturnScreen = id;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// ANTHROPIC API CALL
+// ═══════════════════════════════════════════════
+async function callClaude(systemPrompt, userMessage) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }]
+    })
+  });
+  if (!response.ok) throw new Error('API error');
+  const data = await response.json();
+  return data.content[0].text;
+}
+
+function safeJSON(text) {
+  try {
+    const clean = text.replace(/```json\n?|\n?```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CONVERSATION ANALYZER
+// ═══════════════════════════════════════════════
+async function runAnalysis() {
+  if (!canUseFeature('analyzer')) { showPaywall('analyzer'); return; }
+  const input = document.getElementById('analyzer-input').value.trim();
+  if (!input || input.length < 20) {
+    showError('analyzer-error', 'Please paste a conversation first.');
+    return;
+  }
+  hideError('analyzer-error');
+  setLoading('analyzer', true);
+  document.getElementById('analyzer-result').classList.remove('show');
+  useFeature('analyzer');
+
+  const system = `You are the AI engine for "Embodying Sane," a relationship awareness app. 
+Analyze conversations for manipulation tactics, emotional dynamics, red flags, and healthy vs unhealthy patterns.
+Be compassionate, clear, and empowering — never blame the user.
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "concernScore": <number 0-100, where 0=healthy, 100=very concerning>,
+  "flags": [<array of strings like "Gaslighting", "Love Bombing", "Deflection", "Boundary Violation", "Healthy Communication", etc>],
+  "flagColors": [<array of "red", "yellow", or "green" corresponding to each flag>],
+  "insights": [
+    {"color": "red|yellow|green|plum", "text": "<insight text>"},
+    ...up to 5 insights
+  ],
+  "advice": "<2-3 sentences of empowering, practical guidance for the user>"
+}`;
+
+  try {
+    const raw = await callClaude(system, `Analyze this conversation:\n\n${input}`);
+    const data = safeJSON(raw);
+    if (!data) throw new Error('parse error');
+
+    // Score
+    const score = Math.round(data.concernScore);
+    const ring = document.getElementById('result-score-ring');
+    const scoreEl = document.getElementById('result-score');
+    scoreEl.textContent = score;
+    if (score >= 70) { ring.style.borderColor = 'var(--danger)'; scoreEl.style.color = 'var(--danger)'; }
+    else if (score >= 40) { ring.style.borderColor = 'var(--warning)'; scoreEl.style.color = 'var(--warning)'; }
+    else { ring.style.borderColor = 'var(--safe)'; scoreEl.style.color = 'var(--safe)'; }
+
+    // Flags
+    const flagsEl = document.getElementById('result-flags');
+    flagsEl.innerHTML = '';
+    (data.flags || []).forEach((f, i) => {
+      const color = (data.flagColors || [])[i] || 'yellow';
+      const pill = document.createElement('span');
+      pill.className = `flag-pill flag-${color}`;
+      pill.textContent = f;
+      flagsEl.appendChild(pill);
+    });
+
+    // Insights
+    const insightsEl = document.getElementById('result-insights');
+    insightsEl.innerHTML = '';
+    (data.insights || []).forEach(ins => {
+      insightsEl.innerHTML += `<div class="insight-item"><div class="insight-dot ${ins.color}"></div><div class="insight-text">${ins.text}</div></div>`;
+    });
+
+    // Advice
+    document.getElementById('result-advice').textContent = data.advice || '';
+
+    setLoading('analyzer', false);
+    document.getElementById('analyzer-result').classList.add('show');
+  } catch(e) {
+    setLoading('analyzer', false);
+    showError('analyzer-error', 'Analysis failed. Please try again.');
+  }
+}
+
+function clearAnalyzer() {
+  document.getElementById('analyzer-input').value = '';
+  document.getElementById('analyzer-result').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// THE MIRROR
+// ═══════════════════════════════════════════════
+async function runMirror() {
+  if (!canUseFeature('mirror')) { showPaywall('mirror'); return; }
+  const input = document.getElementById('mirror-input').value.trim();
+  if (!input || input.length < 20) {
+    showError('mirror-error', 'Please write something first.');
+    return;
+  }
+  hideError('mirror-error');
+  setLoading('mirror', true);
+  document.getElementById('mirror-result').classList.remove('show');
+  useFeature('mirror');
+
+  const system = `You are The Mirror in "Embodying Sane" — a compassionate, wise AI that reflects users' own patterns back to them.
+Your role is NOT to analyze other people. You focus entirely on the user — their responses, behaviors, patterns, and growth.
+Be gentle, honest, non-judgmental, and empowering. Use an intuitive, slightly poetic tone.
+
+Respond ONLY with valid JSON:
+{
+  "reflection": "<2-3 sentences reflecting what you observe about the user's situation and inner state>",
+  "patterns": [
+    {"color": "red|yellow|green|plum", "text": "<a pattern you notice in the user's behavior or response>"},
+    ...2-4 patterns
+  ],
+  "question": "<a single powerful, open-ended question to invite the user deeper into self-awareness>"
+}`;
+
+  try {
+    const raw = await callClaude(system, `Here is what the user shared:\n\n${input}`);
+    const data = safeJSON(raw);
+    if (!data) throw new Error('parse error');
+
+    document.getElementById('mirror-reflection').textContent = data.reflection || '';
+
+    const patternsEl = document.getElementById('mirror-patterns');
+    patternsEl.innerHTML = '';
+    (data.patterns || []).forEach(p => {
+      patternsEl.innerHTML += `<div class="insight-item"><div class="insight-dot ${p.color}"></div><div class="insight-text">${p.text}</div></div>`;
+    });
+
+    document.getElementById('mirror-question').textContent = data.question || '';
+
+    setLoading('mirror', false);
+    document.getElementById('mirror-result').classList.add('show');
+  } catch(e) {
+    setLoading('mirror', false);
+    showError('mirror-error', 'Mirror unavailable. Please try again.');
+  }
+}
+
+function clearMirror() {
+  document.getElementById('mirror-input').value = '';
+  document.getElementById('mirror-result').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// INTENT DETECTION
+// ═══════════════════════════════════════════════
+async function runIntent() {
+  const input = document.getElementById('intent-input').value.trim();
+  if (!input || input.length < 5) {
+    showError('intent-error', 'Please paste a message first.');
+    return;
+  }
+  hideError('intent-error');
+  setLoading('intent', true);
+  document.getElementById('intent-result').classList.remove('show');
+
+  const system = `You are the Intent Detection engine for "Embodying Sane."
+Decode the hidden intent, subtext, and emotional undercurrent in a single message or statement.
+Be precise, empowering, and honest. Focus on what the message is really doing to the recipient.
+
+Respond ONLY with valid JSON:
+{
+  "intents": [<array of intent labels like "Manipulation", "Genuine Care", "Deflection", "Boundary Testing", "Love Bombing", "Guilt Tripping", "Sincere Apology", "Control", "Neutral Request", etc>],
+  "intentTypes": [<array of "manipulative", "neutral", "genuine", or "boundary" for each intent>],
+  "explanation": "<2-3 sentences explaining the detected intent and why>",
+  "subtext": "<what is really being communicated beneath the surface words>",
+  "howToRespond": "<practical guidance on how the user might respond or what to be aware of>"
+}`;
+
+  try {
+    const raw = await callClaude(system, `Decode the intent of this message:\n\n"${input}"`);
+    const data = safeJSON(raw);
+    if (!data) throw new Error('parse');
+
+    const badgesEl = document.getElementById('intent-badges');
+    badgesEl.innerHTML = '';
+    (data.intents || []).forEach((intent, i) => {
+      const type = (data.intentTypes || [])[i] || 'neutral';
+      badgesEl.innerHTML += `<span class="intent-badge ${type}">${intent}</span> `;
+    });
+
+    document.getElementById('intent-explanation').textContent = data.explanation || '';
+    document.getElementById('intent-subtext').textContent = data.subtext || '';
+    document.getElementById('intent-response').textContent = data.howToRespond || '';
+
+    setLoading('intent', false);
+    document.getElementById('intent-result').classList.add('show');
+  } catch(e) {
+    setLoading('intent', false);
+    showError('intent-error', 'Detection failed. Please try again.');
+  }
+}
+
+function clearIntent() {
+  document.getElementById('intent-input').value = '';
+  document.getElementById('intent-result').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// SELF TEST
+// ═══════════════════════════════════════════════
+const questions = [
+  { q: "When someone upsets you, what's your first instinct?", opts: ["Blame myself", "Question my perception", "Express how I feel", "Withdraw and go silent"] },
+  { q: "If a partner says 'you're too sensitive,' you:", opts: ["Believe them immediately", "Feel confused and unsure", "Recognize it as dismissal", "Apologize for your feelings"] },
+  { q: "How often do you check in with your own needs in a relationship?", opts: ["Rarely — I focus on theirs", "Sometimes, but feel guilty", "Regularly and without guilt", "Only when something breaks"] },
+  { q: "When you feel something is wrong, you:", opts: ["Dismiss the feeling", "Overthink until confused", "Trust it and investigate", "Ask others to validate it"] },
+  { q: "How comfortable are you saying 'no' to someone you love?", opts: ["Very uncomfortable", "Uncomfortable but I try", "Comfortable and clear", "Dependent on their reaction"] }
+];
+let stAnswers = [];
+let stCurrent = 0;
+
+function initSelfTest() {
+  stAnswers = [];
+  stCurrent = 0;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const body = document.getElementById('selftest-body');
+  if (stCurrent >= questions.length) {
+    showTestResult();
+    return;
+  }
+  const q = questions[stCurrent];
+  const pct = (stCurrent / questions.length) * 100;
+  body.innerHTML = `
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="q-card">
+      <div class="q-num">QUESTION ${stCurrent + 1} OF ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-options">
+        ${q.opts.map((opt, i) => `<button class="q-opt" onclick="answerQ(${i})">${opt}</button>`).join('')}
+      </div>
+    </div>
+    <div style="padding:0 20px;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:rgba(247,240,227,0.25);text-align:center;">There are no wrong answers — only honest ones</div>
+  `;
+}
+
+function answerQ(i) {
+  stAnswers.push(i);
+  stCurrent++;
+  renderQuestion();
+}
+
+function showTestResult() {
+  // Score based on answers — index 2 = most aware choice in each question
+  const awarenessScore = Math.round((stAnswers.filter(a => a === 2).length / questions.length) * 100);
+  const level = awarenessScore >= 70 ? { label: 'HIGH AWARENESS', color: 'var(--safe)', msg: "You are deeply in tune with yourself. Your boundaries are clear and your instincts are strong. Trust them." }
+              : awarenessScore >= 40 ? { label: 'GROWING AWARENESS', color: 'var(--gold)', msg: "You are waking up to your own patterns. The fact that you're here means you're already doing the work." }
+              : { label: 'EARLY AWARENESS', color: 'var(--plum-light)', msg: "This is where growth begins — in the honest looking. You're braver than you know for asking these questions." };
+
+  document.getElementById('selftest-body').innerHTML = `
+    <div style="padding:30px 20px;text-align:center;">
+      <div class="score-ring" style="border-color:${level.color};width:100px;height:100px;margin:0 auto 20px;">
+        <div class="score-num" style="color:${level.color};font-size:28px;">${awarenessScore}</div>
+        <div class="score-label">AWARENESS</div>
+      </div>
+      <div style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:${level.color};margin-bottom:16px;">${level.label}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--white-dim);line-height:1.7;margin-bottom:30px;padding:0 10px;">${level.msg}</div>
+      <button class="btn-gold" onclick="initSelfTest()">TAKE TEST AGAIN ▲</button>
+      <div style="margin-top:12px;">
+        <button class="btn-outline" onclick="goTo('mirror')">GO TO THE MIRROR</button>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// RED FLAG DICTIONARY
+// ═══════════════════════════════════════════════
+const dictTerms = [
+  { name: "GASLIGHTING", def: "When someone manipulates you into questioning your own reality, memory, or perceptions. 'That never happened.' 'You're imagining things.' 'You're too sensitive.'" },
+  { name: "LOVE BOMBING", def: "Overwhelming someone with affection, attention, and praise early on to create dependency and lower defenses. It feels amazing — until the control begins." },
+  { name: "DARVO", def: "Deny, Attack, Reverse Victim and Offender. A manipulation tactic where the abuser denies what happened, attacks you for bringing it up, then claims to be the real victim." },
+  { name: "BREADCRUMBING", def: "Giving just enough attention or affection to keep someone interested without committing. Keeps you hoping while they maintain control." },
+  { name: "TRAUMA BONDING", def: "A psychological response where victims develop strong emotional attachments to their abusers through cycles of abuse and affection. Explains why it's so hard to leave." },
+  { name: "COERCIVE CONTROL", def: "A pattern of behavior that seeks to take away liberty or freedom and strip away the victim's sense of self. Can include isolation, financial abuse, monitoring, and threats." },
+  { name: "WORD SALAD", def: "Circular, confusing conversations designed to leave you exhausted and doubting yourself. You enter the conversation with a valid concern and leave feeling confused." },
+  { name: "FUTURE FAKING", def: "Making false promises about a shared future — marriage, children, homes — to keep you invested while never intending to follow through." },
+  { name: "INTERMITTENT REINFORCEMENT", def: "Unpredictable cycles of reward and punishment that create addiction-like emotional bonds. The uncertainty keeps you constantly trying to earn approval." },
+  { name: "FLYING MONKEYS", def: "People recruited (knowingly or not) to do an abuser's bidding — delivering messages, gathering information, pressuring the target on their behalf." },
+];
+
+function initDictionary() {
+  const list = document.getElementById('dict-list');
+  if (list.innerHTML) return;
+  list.innerHTML = dictTerms.map((t, i) => `
+    <div class="dict-term" id="dt-${i}" onclick="toggleTerm(${i})">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="dict-term-name">${t.name}</div>
+        <div style="color:var(--gold);font-size:14px;transition:transform 0.2s;" id="dt-arr-${i}">›</div>
+      </div>
+      <div class="dict-term-def">${t.def}</div>
+    </div>
+  `).join('');
+}
+
+function toggleTerm(i) {
+  const el = document.getElementById('dt-' + i);
+  const arr = document.getElementById('dt-arr-' + i);
+  const isOpen = el.classList.toggle('open');
+  arr.style.transform = isOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+}
+
+// ═══════════════════════════════════════════════
+// PATTERN TIMELINE
+// ═══════════════════════════════════════════════
+const defaultPatterns = [
+  { emoji: '🔄', name: 'PEOPLE PLEASING', count: 'Noticed 3 times', pct: 75 },
+  { emoji: '🚪', name: 'AVOIDANCE OF CONFLICT', count: 'Noticed 5 times', pct: 90 },
+  { emoji: '🎭', name: 'MASKING TRUE FEELINGS', count: 'Noticed 2 times', pct: 50 },
+  { emoji: '🔦', name: 'OVER-EXPLAINING YOURSELF', count: 'Noticed 4 times', pct: 70 },
+];
+let userPatterns = [...defaultPatterns];
+
+function initTimeline() {
+  renderTimeline();
+}
+
+function renderTimeline() {
+  const list = document.getElementById('timeline-list');
+  list.innerHTML = userPatterns.map(p => `
+    <div class="pattern-item">
+      <div class="pattern-emoji">${p.emoji}</div>
+      <div class="pattern-info">
+        <div class="pattern-name">${p.name}</div>
+        <div class="pattern-count">${p.count}</div>
+      </div>
+      <div class="pattern-bar"><div class="pattern-fill" style="width:${p.pct}%"></div></div>
+    </div>
+  `).join('');
+}
+
+function addPattern() {
+  const input = document.getElementById('timeline-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const emojis = ['✨','🌀','💭','🔍','⚡','🌊','🎯','🌙'];
+  userPatterns.unshift({
+    emoji: emojis[Math.floor(Math.random() * emojis.length)],
+    name: text.toUpperCase().substring(0, 40),
+    count: 'Just added',
+    pct: Math.floor(Math.random() * 40) + 20
+  });
+  input.value = '';
+  renderTimeline();
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function setLoading(screen, on) {
+  const loading = document.getElementById(screen + '-loading');
+  const btn = document.getElementById(screen + '-btn');
+  if (loading) loading.classList.toggle('show', on);
+  if (btn) btn.disabled = on;
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.classList.add('show'); }
+}
+
+function hideError(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// SIGNUP & USER ACCOUNT
+// ═══════════════════════════════════════════════
+let currentUser = { name: '', email: '', signedUp: false };
+let legalReturnScreen = 'signup';
+
+function doSignup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const err = document.getElementById('signup-error');
+
+  if (!name) {
+    err.textContent = 'Please enter your first name.';
+    err.style.display = 'block'; return;
+  }
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    err.textContent = 'Please enter a valid email address.';
+    err.style.display = 'block'; return;
+  }
+  err.style.display = 'none';
+  currentUser = { name, email, signedUp: true };
+
+  // Update home greeting with their name
+  const greeting = document.querySelector('.home-greeting');
+  if (greeting) greeting.textContent = 'WELCOME, ' + name.toUpperCase();
+
+  goTo('home');
+}
+
+function history_back_legal() {
+  goTo(legalReturnScreen);
+}
+
+// Override goTo to track legal return screen
+const _origGoTo_legal = goTo;
+
+// ═══════════════════════════════════════════════
+// ADMIN SYSTEM
+// ═══════════════════════════════════════════════
+const ADMIN_PW = 'Futurefuks44';
+let adminTapCount = 0;
+let adminTapTimer = null;
+let adminLoggedIn = false;
+
+// Secret trigger — tap hidden area on onboarding 5 times
+function adminTap() {
+  adminTapCount++;
+  clearTimeout(adminTapTimer);
+  const hint = document.getElementById('admin-tap-hint');
+  if (adminTapCount >= 5) {
+    adminTapCount = 0;
+    hint.textContent = '';
+    goTo('admin-login');
+    return;
+  }
+  hint.textContent = `${5 - adminTapCount} more`;
+  adminTapTimer = setTimeout(() => {
+    adminTapCount = 0;
+    hint.textContent = '';
+  }, 3000);
+}
+
+function checkAdminPW() {
+  const input = document.getElementById('admin-pw-input');
+  const err = document.getElementById('admin-err');
+  if (input.value === ADMIN_PW) {
+    adminLoggedIn = true;
+    input.value = '';
+    err.classList.remove('show');
+    // Mark as subscribed so no paywalls show
+    usage.subscribed = true;
+    updateUsageUI('analyzer');
+    updateUsageUI('mirror');
+    updateAdminStats();
+    goTo('admin-dashboard');
+  } else {
+    err.classList.add('show');
+    input.value = '';
+    input.focus();
+  }
+}
+
+function adminLogout() {
+  adminLoggedIn = false;
+  goTo('onboarding');
+}
+
+function adminGoToApp() {
+  goTo('home');
+}
+
+function adminResetDemo() {
+  usage.analyzer = 0;
+  usage.mirror = 0;
+  usage.subscribed = false;
+  updateUsageUI('analyzer');
+  updateUsageUI('mirror');
+  alert('Demo usage counters reset. Users will see full free trial again.');
+}
+
+function adminTogglePaywall() {
+  const icon = document.getElementById('admin-pw-toggle-icon');
+  const text = document.getElementById('admin-pw-toggle-text');
+  const pw = document.getElementById('paywall');
+  if (pw.classList.contains('show')) {
+    pw.classList.remove('show');
+    icon.textContent = '👁';
+    text.textContent = 'Preview paywall screen';
+  } else {
+    pw.classList.add('show');
+    icon.textContent = '✕';
+    text.textContent = 'Hide paywall preview';
+  }
+}
+
+function updateAdminStats() {
+  // In production these pull from your real database
+  // For now showing demo numbers that grow with usage
+  document.getElementById('admin-subscribers').textContent = usage.subscribed && !adminLoggedIn ? '1' : '0';
+  const rev = 0 * 9.41;
+  document.getElementById('admin-revenue').textContent = '$' + rev.toFixed(0);
+  document.getElementById('admin-trial-users').textContent = (usage.analyzer > 0 || usage.mirror > 0) ? '1' : '0';
+  document.getElementById('admin-analyses').textContent = usage.analyzer + usage.mirror;
+}
+</script>
+</body>
+</html>
