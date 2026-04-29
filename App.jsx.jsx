@@ -34,7 +34,7 @@ const SunSVG = ({ size = 70, animate = false }) => {
           <stop offset="0%" stopColor={C.goldLight} />
           <stop offset="100%" stopColor={C.gold} />
         </radialGradient>
-     const STRIPE__LINK = "https://buy.stripe.com/3cI28r5Wk52Rf705Bl4AU01"
+     const STRIPE__LINK = "https://buy.stripe.com/3cI28r5Wk52Rf705Bl4AU01";
       {Array.from({ length: rays }).map((_, i) => {
         const a = (i * 360) / rays, r = (a * Math.PI) / 180;
         const long = i % 2 === 0, len = long ? outerR : outerR * 0.75;
